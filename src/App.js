@@ -1,24 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
+import Dashboard from './pages/Dashboard'; // Admin Dashboard
+import Students from './pages/Students';
+import Login from './pages/Login'; // Import the Login page
+import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import { Box } from '@mui/material';
+
+// Create a default theme
+const theme = createTheme();
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Routes>
+          {/* Public Route for Login */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Private Routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute role="admin">
+                {/* Render the Dashboard if the user is an admin */}
+                <Header />
+                <Box sx={{ display: 'flex', flexGrow: 1 }}>
+                  <Sidebar />
+                  <Box sx={{ flexGrow: 1, padding: { xs: '10px', sm: '20px' } }}>
+                    <Dashboard />
+                  </Box>
+                </Box>
+                <Footer />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/students"
+            element={
+              <PrivateRoute role="admin">
+                {/* Render the Students page if the user is an admin */}
+                <Header />
+                <Box sx={{ display: 'flex', flexGrow: 1 }}>
+                  <Sidebar />
+                  <Box sx={{ flexGrow: 1, padding: { xs: '10px', sm: '20px' } }}>
+                    <Students />
+                  </Box>
+                </Box>
+                <Footer />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 
